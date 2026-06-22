@@ -1,6 +1,6 @@
 import express from "express";
-import pool from "../config/db.js";
-import { redisClient } from "../config/redis.js";
+import pool from "../../config/db.js";
+import { redisClient } from "../../config/redis.js";
 const healthRouter = express.Router();
 
 healthRouter.get("/health", async (req, res) => {
