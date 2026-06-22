@@ -17,7 +17,7 @@ const generateRefreshToken = (user)=>{
     );
 };
 
-const checkJwtExpiry = (token)=>{
+const verifyRefreshToken = (token)=>{
    try {
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     return decoded;
@@ -27,7 +27,7 @@ const checkJwtExpiry = (token)=>{
 };
 
 
-const checkAccessTokenExpiry = (token)=>{
+const verifyAccessToken = (token)=>{
    try {
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     return decoded;
@@ -36,4 +36,4 @@ const checkAccessTokenExpiry = (token)=>{
   }
 };
 
-export { generateAccessToken, generateRefreshToken, checkJwtExpiry, checkAccessTokenExpiry };
+export { generateAccessToken, generateRefreshToken, verifyRefreshToken, verifyAccessToken };

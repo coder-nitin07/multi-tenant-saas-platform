@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import prisma from '../../config/prisma.js';
 import AppError from "../../utils/AppError.js";
-import { checkJwtExpiry, generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
+import { verifyRefreshToken, generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
 
 // registet api
 const register = async (req, res, next)=>{
@@ -157,9 +157,9 @@ const refreshToken = async (req, res, next)=>{
       throw new AppError('Refresh Token not found', 404);
     }
 
-    const decoded = checkJwtExpiry(refreshToken);
+    const decoded = verifyRefreshToken(refreshToken);
     if(!decoded){
-      return res.status(400).json({ message: 'Token already expiresd' });
+      throw new AppError('Refresh token expired or invalid', 401);
     }
 
     const existingUser = await prisma.user.findFirst({
