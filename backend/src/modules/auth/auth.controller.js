@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import prisma from '../../config/prisma.js';
 import AppError from "../../utils/AppError.js";
-import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
+import { checkJwtExpiry, generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
 
 // registet api
 const register = async (req, res, next)=>{
@@ -149,4 +149,61 @@ const logout = async (req, res, next)=>{
   }
 };
 
-export { register, login, logout };
+// refresh token api
+const refreshToken = async (req, res, next)=>{
+  try {
+    const refreshToken  = req.cookies.refreshToken;
+    if(!refreshToken) {
+      throw new AppError('Refresh Token not found', 404);
+    }
+
+    const decoded = checkJwtExpiry(refreshToken);
+    if(!decoded){
+      return res.status(400).json({ message: 'Token already expiresd' });
+    }
+
+    const existingUser = await prisma.user.findFirst({
+      where: { id: decoded.id }
+    });
+    if(!existingUser){
+      throw new AppError('Refresh Token not found', 404);
+    } 
+
+    if(existingUser.refreshToken !== refreshToken) {
+      throw new AppError('Invalid Refresh Token', 401);
+    }
+
+    const user  = {
+      id: existingUser.id,
+      email: existingUser.email
+    }
+    
+    // generate tokens
+    const newAccessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+
+    // store new refresh token in DB
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken: newRefreshToken }
+    });
+
+    // store new refresh token in cookies
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    // send access token
+    res.status(200).json({
+      message: 'Tokens Updated Successfully',
+      access_token: newAccessToken
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export { register, login, logout, refreshToken };
