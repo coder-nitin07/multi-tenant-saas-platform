@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import healthRouter from './modules/routes/health.route.js';
 import authRouter from './modules/auth/auth.routes.js';
+import organizationRouter from './modules/organization/organization.routes.js';
 const app = express();
 
 // middlware
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 // routes
 app.use('/api', healthRouter);
 app.use('/api', authRouter);
+app.use('/api', organizationRouter);
 
 // error Handler
 app.use(errorHandler);
