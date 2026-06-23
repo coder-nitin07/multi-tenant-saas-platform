@@ -1,4 +1,5 @@
 import prisma from "../../config/prisma.js";
+import AppError from "../../utils/AppError.js";
 
 // create organization
 const createOrganization = async (req, res, next)=>{
@@ -48,4 +49,66 @@ const createOrganization = async (req, res, next)=>{
     }
 };
 
-export { createOrganization };
+// get organizations of an User
+const getOrganization = async (req, res, next) =>{
+    try {
+        const userId = req.user.id;
+
+        const getOrganizations = await prisma.organizationMember.findMany({
+            where: { userId },
+            select: {
+                role: true,
+
+                organization: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            }
+        });
+        if(getOrganizations.length === 0){
+            return res.status(200).json({ message: 'No Organizaton found' });
+        }
+        
+        res.status(200).json({
+            getOrganizations
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// get organization by Id
+const getOrganizationById = async (req, res, next) =>{
+    try {
+        const userId = req.user.id;
+        const organizationId = req.params.id;
+
+        const getTheOrganization = await prisma.organizationMember.findFirst({
+            where: { userId, organizationId },
+            select: {
+                id: true,
+                role: true,
+                organization: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            }
+        });
+        if(!getTheOrganization){
+            throw new AppError('You did not belong to this Organization', 403);
+        }
+
+        res.status(200).json({
+            message: 'Organization Data Fetched Successfully',
+            data: getTheOrganization
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { createOrganization, getOrganization, getOrganizationById };
