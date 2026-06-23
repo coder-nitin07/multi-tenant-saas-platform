@@ -5,7 +5,7 @@ import validate from '../middleware/validate.middleware.js';
 import { organizationSchema } from './organization.validation.js';
 const organizationRouter = express.Router();
 
-organizationRouter.post('/createOrganization', validate(organizationSchema), authMiddleware, createOrganization);
+organizationRouter.post('/createOrganization', authMiddleware, validate(organizationSchema), createOrganization);
 organizationRouter.get('/getOrganization', authMiddleware, getOrganization );
 organizationRouter.get('/getOrganizationById/:id', authMiddleware, getOrganizationById );
 
