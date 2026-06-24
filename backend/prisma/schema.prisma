@@ -15,6 +15,7 @@ model User {
   updatedAt    DateTime @updatedAt
 
   members      OrganizationMember[]
+  invitations  Invitation[]
 }
 
 model Organization {
@@ -24,6 +25,7 @@ model Organization {
   updatedAt   DateTime   @updatedAt 
 
   members     OrganizationMember[]
+  invitations Invitation[]
 }
 
 model OrganizationMember {
@@ -46,4 +48,28 @@ enum Role {
   OWNER
   ADMIN
   MEMBER
+}
+
+model Invitation {
+  id                String           @id @default(ulid())
+  email             String        
+  organizationId    String
+  invitedBy         String
+  
+  token             String            @unique
+  status            InvitationStatus  @default(PENDING)
+
+  expiresAt         DateTime
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt 
+
+  organization      Organization      @relation(fields: [ organizationId ], references: [ id ])
+  inviter           User              @relation(fields: [ invitedBy ], references: [ id ])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
