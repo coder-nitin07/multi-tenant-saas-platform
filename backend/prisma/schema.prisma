@@ -72,4 +72,5 @@ enum InvitationStatus {
   PENDING
   ACCEPTED
   DECLINED
+  EXPIRED
 }
