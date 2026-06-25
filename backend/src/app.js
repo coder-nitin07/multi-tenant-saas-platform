@@ -5,6 +5,7 @@ import morgan from "morgan";
 import healthRouter from './modules/routes/health.route.js';
 import authRouter from './modules/auth/auth.routes.js';
 import organizationRouter from './modules/organization/organization.routes.js';
+import organizationMemberRouter from './modules/organizationMember/organizationMember.routes.js';
 const app = express();
 
 // middlware
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 app.use('/api', healthRouter);
 app.use('/api', authRouter);
 app.use('/api', organizationRouter);
+app.use('/api', organizationMemberRouter);
 
 // error Handler
 app.use(errorHandler);

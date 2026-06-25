@@ -1,5 +1,5 @@
-import prisma from "../../config/prisma";
-import AppError from "../../utils/AppError";
+import prisma from "../../config/prisma.js";
+import AppError from "../../utils/AppError.js";
 
 const activeOrganizationMiddleware = async (req, res, next)=>{
     try {
