@@ -7,30 +7,32 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  password     String
-  refreshToken String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  refreshToken  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  members      OrganizationMember[]
-  invitations  Invitation[]
+  members       OrganizationMember[]
+  invitations   Invitation[]
 
-  auditActions AuditLog[] @relation("AuditActor")
-  auditTargets AuditLog[] @relation("AuditTarget")
+  auditActions  AuditLog[] @relation("AuditActor")
+  auditTargets  AuditLog[] @relation("AuditTarget")
+  notifications Notification[]
 }
 
 model Organization {
-  id          String     @id @default(uuid())
-  name        String     @unique
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt 
+  id            String     @id @default(uuid())
+  name          String     @unique
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt 
 
-  members     OrganizationMember[]
-  invitations Invitation[]
+  members       OrganizationMember[]
+  invitations   Invitation[]
 
-  auditLogs   AuditLog[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
 }
 
 model OrganizationMember {
@@ -109,4 +111,35 @@ enum AuditAction {
   MEMBER_REMOVED
   ORGANIZATION_UPDATED
   PERMISSION_UPDATED
+}
+
+
+model Notification {
+  id              String               @id @default(uuid())
+
+  userId          String
+  organizationId  String?
+
+  type            NotificationType
+
+  title           String
+  message         String
+
+  isRead          Boolean              @default(false)
+
+  metadata        Json?
+
+  createdAt       DateTime             @default(now())
+
+  user            User                 @relation(fields: [ userId ], references: [ id ])
+  organization    Organization?        @relation(fields: [ organizationId ], references: [ id ])
+}
+
+enum NotificationType {
+  INVITATION_SENT
+  INVITATION_ACCEPTED
+  ROLE_CHANGED
+  MEMBER_JOINED
+  MEMBER_REMOVED
+  ORGANIZATION_UPDATED
 }
