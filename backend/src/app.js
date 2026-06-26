@@ -6,6 +6,7 @@ import healthRouter from './modules/routes/health.route.js';
 import authRouter from './modules/auth/auth.routes.js';
 import organizationRouter from './modules/organization/organization.routes.js';
 import organizationMemberRouter from './modules/organizationMember/organizationMember.routes.js';
+import emailRouter from './modules/email/email.router.js';
 const app = express();
 
 // middlware
@@ -22,6 +23,7 @@ app.use('/api', healthRouter);
 app.use('/api', authRouter);
 app.use('/api', organizationRouter);
 app.use('/api', organizationMemberRouter);
+app.use('/api', emailRouter);
 
 // error Handler
 app.use(errorHandler);
