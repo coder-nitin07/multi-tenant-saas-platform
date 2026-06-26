@@ -16,6 +16,9 @@ model User {
 
   members      OrganizationMember[]
   invitations  Invitation[]
+
+  auditActions AuditLog[] @relation("AuditActor")
+  auditTargets AuditLog[] @relation("AuditTarget")
 }
 
 model Organization {
@@ -26,6 +29,8 @@ model Organization {
 
   members     OrganizationMember[]
   invitations Invitation[]
+
+  auditLogs   AuditLog[]
 }
 
 model OrganizationMember {
@@ -73,4 +78,35 @@ enum InvitationStatus {
   ACCEPTED
   DECLINED
   EXPIRED
+}
+
+
+
+model AuditLog {
+  id                String          @id @default(uuid())
+  
+  organizationId    String
+  actorId           String
+  targetUserId      String?
+
+  action            AuditAction
+  metadata          Json
+
+  createdAt         DateTime        @default(now())
+
+
+  organization      Organization      @relation(fields: [ organizationId ], references: [ id ])
+  actor             User              @relation("AuditActor", fields: [actorId], references: [id])
+  target            User?             @relation("AuditTarget", fields: [ targetUserId ], references: [ id ])
+}
+
+
+enum AuditAction {
+  ORGANIZATION_CREATED
+  INVITATION_SENT
+  INVITATION_ACCEPTED
+  ROLE_CHANGED
+  MEMBER_REMOVED
+  ORGANIZATION_UPDATED
+  PERMISSION_UPDATED
 }
