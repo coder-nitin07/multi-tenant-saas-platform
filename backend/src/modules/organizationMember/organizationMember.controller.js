@@ -1,6 +1,8 @@
+import { AUDIT_ACTION } from "../../config/auditAction.js";
 import { ROLES } from "../../config/permission.js";
 import prisma from "../../config/prisma.js";
 import emailQueue from "../../queues/email.queue.js";
+import createAuditLog from "../../services/audit.service.js";
 import AppError from "../../utils/AppError.js";
 import crypto from 'crypto';
 
@@ -52,6 +54,16 @@ const organizationMemberInvitation = async (req, res, next)=>{
             email,
             token,
             organizationId
+        });
+
+        await createAuditLog({
+            organizationId,
+            actorId: req.user.id,
+            action: AUDIT_ACTION.INVITATION_SENT,
+            targetUserId: checkUserExist.id,
+            metadata: {
+                email
+            }
         });
 
         res.status(201).json({
@@ -136,6 +148,16 @@ const acceptInvitation = async (req, res, next)=>{
             return { organizationMemberCreation, changeInvitation };
         });
 
+        await createAuditLog({
+            organizationId,
+            actorId: userId,
+            action: AUDIT_ACTION.INVITATION_ACCEPTED,
+            targetUserId: userId,
+            metadata: {
+                invitationId: getInvitationToken.id
+            }
+        });
+
         res.status(200).json({
             message: 'User become the Member to the Organization',
             organization: result.organizationMemberCreation,
@@ -146,4 +168,44 @@ const acceptInvitation = async (req, res, next)=>{
     }
 };
 
-export { organizationMemberInvitation, acceptInvitation }
+// get organization audit logs
+const getOrganizationAuditLogs = async (req, res, next) => {
+    try {
+
+        const organizationId = req.params.id;
+        console.log("ora", organizationId);
+        const auditLogs = await prisma.auditLog.findMany({
+            where: {
+                organizationId
+            },
+            include: {
+                actor: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                },
+                target: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        res.status(200).json({
+            message: "Audit logs fetched successfully",
+            count: auditLogs.length,
+            data: auditLogs
+        });
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { organizationMemberInvitation, acceptInvitation, getOrganizationAuditLogs }

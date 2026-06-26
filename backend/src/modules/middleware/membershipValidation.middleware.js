@@ -4,7 +4,7 @@ import AppError from "../../utils/AppError.js";
 const membershipValidationMiddleware = async (req, res, next)=>{
     try {
         const userId = req.user.id;
-        const organizationId  = req.organization.id;
+        const organizationId  = req.organization?.id ?? req.params.id;
 
         const getTheOrganization = await prisma.organizationMember.findFirst({
             where: { userId, organizationId }
@@ -16,7 +16,7 @@ const membershipValidationMiddleware = async (req, res, next)=>{
         req.membership = getTheOrganization;
         next();
     } catch (err) {
-        next(new AppError('Invalid Organization Id', 403));
+        next(err);
     }
 };
 
