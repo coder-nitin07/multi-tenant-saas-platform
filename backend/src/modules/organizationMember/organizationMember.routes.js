@@ -1,5 +1,5 @@
 import express from 'express';
-import { acceptInvitation, getOrganizationAuditLogs, organizationMemberInvitation } from './organizationMember.controller.js';
+import { acceptInvitation, getNotifications, getOrganizationAuditLogs, markNotificationAsRead, organizationMemberInvitation } from './organizationMember.controller.js';
 import authMiddleware from '../middleware/auth.middleware.js';
 import activeOrganizationMiddleware from '../middleware/activeOrganization.middleware.js';
 import membershipValidationMiddleware from '../middleware/membershipValidation.middleware.js';
@@ -13,5 +13,9 @@ organizationMemberRouter.post('/organizationMemberInvitation/:id/invitations', a
 organizationMemberRouter.post('/acceptInvitation', authMiddleware, acceptInvitation);
 
 organizationMemberRouter.get("/:id/audit-logs", authMiddleware, membershipValidationMiddleware, getOrganizationAuditLogs);
+
+organizationMemberRouter.get('/getNotifications', authMiddleware, getNotifications);
+
+organizationMemberRouter.patch('/:id/read', authMiddleware, markNotificationAsRead);
 
 export default organizationMemberRouter;

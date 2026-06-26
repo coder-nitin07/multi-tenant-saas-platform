@@ -1,8 +1,10 @@
 import { AUDIT_ACTION } from "../../config/auditAction.js";
+import { NOTIFICATION_TYPE } from "../../config/notificationType.js";
 import { ROLES } from "../../config/permission.js";
 import prisma from "../../config/prisma.js";
 import emailQueue from "../../queues/email.queue.js";
 import createAuditLog from "../../services/audit.service.js";
+import { createNotification } from "../../services/notification.service.js";
 import AppError from "../../utils/AppError.js";
 import crypto from 'crypto';
 
@@ -63,6 +65,17 @@ const organizationMemberInvitation = async (req, res, next)=>{
             targetUserId: checkUserExist.id,
             metadata: {
                 email
+            }
+        });
+
+        await createNotification({
+            userId: checkUserExist.id,
+            organizationId,
+            type: NOTIFICATION_TYPE.INVITATION_SENT,
+            title: "Organization Invitation",
+            message: `You have been invited to join an organization.`,
+            metadata: {
+                invitationId: inviteUser.id
             }
         });
 
@@ -158,6 +171,21 @@ const acceptInvitation = async (req, res, next)=>{
             }
         });
 
+        await Promise.all(
+            members.map(member =>
+                createNotification({
+                    userId: member.userId,
+                    organizationId,
+                    type: NOTIFICATION_TYPE.MEMBER_JOINED,
+                    title: "New Member Joined",
+                    message: `${req.user.email} joined the organization.`,
+                    metadata: {
+                        memberId: userId
+                    }
+                })
+            )
+        );
+
         res.status(200).json({
             message: 'User become the Member to the Organization',
             organization: result.organizationMemberCreation,
@@ -208,4 +236,67 @@ const getOrganizationAuditLogs = async (req, res, next) => {
     }
 };
 
-export { organizationMemberInvitation, acceptInvitation, getOrganizationAuditLogs }
+// Get Notification
+const getNotifications = async (req, res, next) => {
+    try {
+
+        const userId = req.user.id;
+
+        const notifications = await prisma.notification.findMany({
+            where: {
+                userId
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        res.status(200).json({
+            message: "Notifications fetched successfully",
+            count: notifications.length,
+            data: notifications
+        });
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+// read notification
+const markNotificationAsRead = async (req, res, next) => {
+    try {
+
+        const notificationId = req.params.id;
+        const userId = req.user.id;
+
+        const notification = await prisma.notification.findFirst({
+            where: {
+                id: notificationId,
+                userId
+            }
+        });
+
+        if (!notification) {
+            return next(new AppError("Notification not found", 404));
+        }
+
+        const updatedNotification = await prisma.notification.update({
+            where: {
+                id: notificationId
+            },
+            data: {
+                isRead: true
+            }
+        });
+
+        res.status(200).json({
+            message: "Notification marked as read",
+            data: updatedNotification
+        });
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { organizationMemberInvitation, acceptInvitation, getOrganizationAuditLogs, getNotifications, markNotificationAsRead }
