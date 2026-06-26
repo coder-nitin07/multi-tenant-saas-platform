@@ -1,4 +1,5 @@
 import prisma from "../../config/prisma.js";
+import { redisClient } from "../../config/redis.js";
 import AppError from "../../utils/AppError.js";
 
 // create organization
@@ -85,6 +86,17 @@ const getOrganizationById = async (req, res, next) =>{
         const userId = req.user.id;
         const organizationId = req.params.id;
 
+        // create cacheKey
+        const cacheKey = `membership:${ userId }:${ organizationId }`;
+        const cachedData = await redisClient.get(cacheKey);
+
+        if(cachedData){
+            return res.status(200).json({
+                message: 'Organization Data Fetched Successfully (Cache)',
+                data: JSON.parse(cachedData)
+            });
+        }
+
         const getTheOrganization = await prisma.organizationMember.findFirst({
             where: { userId, organizationId },
             select: {
@@ -101,6 +113,12 @@ const getOrganizationById = async (req, res, next) =>{
         if(!getTheOrganization){
             throw new AppError('You did not belong to this Organization', 403);
         }
+
+
+        // set the redis cache
+        await redisClient.set(cacheKey, JSON.stringify(getTheOrganization), {
+            EX: 300
+        });
 
         res.status(200).json({
             message: 'Organization Data Fetched Successfully',
