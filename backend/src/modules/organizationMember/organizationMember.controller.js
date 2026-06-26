@@ -1,5 +1,6 @@
 import { ROLES } from "../../config/permission.js";
 import prisma from "../../config/prisma.js";
+import emailQueue from "../../queues/email.queue.js";
 import AppError from "../../utils/AppError.js";
 import crypto from 'crypto';
 
@@ -44,6 +45,13 @@ const organizationMemberInvitation = async (req, res, next)=>{
                 token,
                 expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
             }
+        });
+
+        await emailQueue.add("send-invitation-email", {
+            invitationId: inviteUser.id,
+            email,
+            token,
+            organizationId
         });
 
         res.status(201).json({
