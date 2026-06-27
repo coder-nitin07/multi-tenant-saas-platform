@@ -7,12 +7,14 @@ import authRouter from './modules/auth/auth.routes.js';
 import organizationRouter from './modules/organization/organization.routes.js';
 import organizationMemberRouter from './modules/organizationMember/organizationMember.routes.js';
 import emailRouter from './modules/email/email.router.js';
+import cors from 'cors';
 const app = express();
 
 // middlware
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.send('Multi-Tenant SaaS Platform');
