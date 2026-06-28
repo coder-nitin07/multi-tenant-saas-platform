@@ -5,6 +5,7 @@ import Dashboard from '@/pages/Dashboard';
 import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 import Register from '@/pages/Register';
+import ProtectedRoute from './ProtectedRoute';
 
 const AppRouter = ()=>{
     return (
@@ -16,8 +17,10 @@ const AppRouter = ()=>{
             </Route>
 
             {/* Protected Dashboard Routes */}
-            <Route element={ <DashboardLayout /> }>
-                <Route path='dashboard' element={ <Dashboard /> } />
+            <Route element={<ProtectedRoute /> }>
+                <Route element={ <DashboardLayout /> }>
+                    <Route path='dashboard' element={ <Dashboard /> } />
+                </Route>
             </Route>
 
             {/* Redirect Base URL'/' to login */}
