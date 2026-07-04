@@ -1,7 +1,7 @@
 import api from "@/lib/axios";
 
 const register = async (userData) =>{
-    const response  = await api.post('/auth/register', userData);
+    const response  = await api.post('/register', userData);
 
     return response.data;
 };

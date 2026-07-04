@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { login as loginService } from "@/services/auth.service";
+import { login as loginService, register as registerService } from "@/services/auth.service";
 
 const AuthContext = createContext();
 
@@ -17,6 +17,18 @@ function AuthProvider({ children }){
         return data;
     };
 
+     // Register
+    const register = async (userData) => {
+        const data = await registerService(userData);
+
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+
+        setUser(data.user);
+
+        return data;
+    };
+
     const logout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -26,7 +38,7 @@ function AuthProvider({ children }){
 
     return (
         // React Context provides data using a prop called value.
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated: !!user }}>
             { children }
         </AuthContext.Provider>
     )

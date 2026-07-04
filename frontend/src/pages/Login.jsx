@@ -96,7 +96,7 @@ function Login() {
 
                                 <Input
                                     type="email"
-                                    placeholder="Enter your email"
+                                    placeholder="enter your email"
                                     { ...register('email') }
                                 />
 
@@ -112,7 +112,7 @@ function Login() {
 
                                 <Input
                                     type="password"
-                                    placeholder="Enter your password"
+                                    placeholder="enter your password"
                                     { ...register('password') }
                                 />
 
@@ -123,24 +123,28 @@ function Login() {
                                 )}
                             </div>
 
-                            <div className="flex justify-between items-center">
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-2">
 
-                                <div className="flex items-center gap-2">
+                                        <Checkbox 
+                                            id="remember"
+                                            className="border-slate-400 data-[state=checked]:bg-cyan-600 data-[state=checked]:border-cyan-600" 
+                                        />
 
-                                    <Checkbox />
+                                        <Label>Remember me</Label>
 
-                                    <Label>Remember me</Label>
+                                    </div>
 
+                                    <button
+                                        type="button"
+                                        className="text-sm text-cyan-600 hover:underline"
+                                        >
+                                        Forgot Password?
+                                    </button>
                                 </div>
 
-                                <button
-                                    type="button"
-                                    className="text-sm text-cyan-600 hover:underline"
-                                >
-                                    Forgot Password?
-                                </button>
-
-                            </div>
+                            
 
                             <Button className="w-full">
                                 Login
@@ -158,7 +162,7 @@ function Login() {
                                 </Link>
 
                             </p>
-
+                          </div>
                         </form>
 
                     </CardContent>
