@@ -9,9 +9,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/validations/auth.validation";
 import useAuth from "@/hooks/useAuth";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 function Login() {
     const { login } = useAuth();
+    const [ isLoading, setIsLoading  ] = useState(false);
 
     const { 
         register, 
@@ -22,13 +25,23 @@ function Login() {
     });
 
     const onSubmit = async (data)=>{
+      setIsLoading(true);
+
       try {
         await login(data);
 
+        toast.success("Login Successfully");
+
         navigate('/dashboard');
         console.log('Login Successfully');
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        toast.error(
+            error.response?.data?.message || 'Something went wrong'
+        );
+
+        console.error(error);
+      } finally{
+        setIsLoading(false);
       }
     };
 
@@ -139,15 +152,15 @@ function Login() {
                                     <button
                                         type="button"
                                         className="text-sm text-cyan-600 hover:underline"
-                                        >
+                                    >
                                         Forgot Password?
                                     </button>
                                 </div>
 
                             
 
-                            <Button className="w-full">
-                                Login
+                            <Button className="w-full" disabled={ isLoading }>
+                                { isLoading ? "Logging in..." : "Login" }
                             </Button>
 
                             <p className="text-center text-sm text-slate-500">

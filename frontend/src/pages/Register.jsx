@@ -9,9 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/validations/auth.validation";
 import useAuth from "@/hooks/useAuth";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 function Register() {
   const { register: registerUser } = useAuth();
+  const [ isLoading, setIsLoading ] = useState(false);
 
   const { 
     register,
@@ -22,13 +25,23 @@ function Register() {
   });
 
   const onSubmit = async (data)=>{
+    setIsLoading(true);
+
     try {
       await registerUser (data);
+
+      toast.success('Registration Successfully');
 
       navigate('/dashboard');
       console.log('Register successfully');
     } catch (err) {
+      toast.error(
+        err.response?.data?.message || 'Something went wrong'
+      );
+
       console.error(err);
+    } finally{
+      setIsLoading(false);
     }
   };
 
@@ -136,8 +149,8 @@ function Register() {
                       </div>
 
                       {/* register button */}
-                      <Button className='w-full'>
-                          Register
+                      <Button className='w-full' disabled={ isLoading }>
+                          { isLoading ? 'Creating Account...': 'Register' }
                       </Button>
 
                       {/* login link */}
