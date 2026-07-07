@@ -1,3 +1,5 @@
+import QuickActions from "@/components/dashboard/QuickActions";
+import RecentActivity from "@/components/dashboard/RecentActivity";
 import StatCard from "@/components/dashboard/StatCard";
 import { Bell, Building2, Mail, Users } from "lucide-react";
 
@@ -40,6 +42,10 @@ function Dashboard(){
             icon={ Bell }
         />
       </div>
+
+      <RecentActivity />
+
+      <QuickActions />
     </div>
   )
 };
