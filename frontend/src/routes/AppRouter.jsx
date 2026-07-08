@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Router } from 'react-router-dom';
 import DashboardLayout from '@/layouts/DashboardLayout';
 import PublicLayout from '@/layouts/PublicLayout';
 import Dashboard from '@/pages/Dashboard';
@@ -6,6 +6,7 @@ import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 import Register from '@/pages/Register';
 import ProtectedRoute from './ProtectedRoute';
+import Organizations from '@/pages/Organizations';
 
 const AppRouter = ()=>{
     return (
@@ -20,6 +21,14 @@ const AppRouter = ()=>{
             <Route element={<ProtectedRoute /> }>
                 <Route element={ <DashboardLayout /> }>
                     <Route path='dashboard' element={ <Dashboard /> } />
+
+                    <Route path='organizations' element={ <Organizations /> } />
+
+                    {/* <Route path='members' element={ <Members /> } /> */}
+                    {/* <Route path='members' element={ <Invitations /> } /> */}
+                    {/* <Route path='members' element={ <Notificatios /> } /> */}
+                    {/* <Route path='members' element={ <Audilog /> } /> */}
+                    {/* <Route path='members' element={ <Setting /> } /> */}
                 </Route>
             </Route>
 
