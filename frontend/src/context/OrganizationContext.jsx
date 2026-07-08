@@ -1,11 +1,31 @@
-import { createOrganization as createOrganizationService } from "@/services/organization.service";
-import { createContext } from "react";
+import { 
+    createOrganization as createOrganizationService, 
+    getOrganization as getOrganizationsService,
+    getOrganizationById as getOrganizationByIdService
+} from "@/services/organization.service";
+import { createContext, useState } from "react";
 
 const OrganizationContext = createContext();
 
 function OrganizationProvider({ children }){
+    const [ organizations, setOrganizations ] = useState([]);
+
     const createOrganization = async (data) =>{
         const response = await createOrganizationService(data);
+
+        return response;
+    };
+
+    const getOrganizations = async ()=>{
+        const response = await getOrganizationsService();
+        console.log(response, "this is response")
+        setOrganizations(response.getOrganizations);
+
+        return response;
+    };
+
+    const getOrganizationById = async (id)=>{
+        const response = await getOrganizationByIdService(id);
 
         return response;
     };
@@ -13,7 +33,10 @@ function OrganizationProvider({ children }){
     return (
         <OrganizationContext.Provider
             value={{
-                createOrganization
+                organizations,
+                createOrganization,
+                getOrganizations,
+                getOrganizationById
             }}
         >
             { children }

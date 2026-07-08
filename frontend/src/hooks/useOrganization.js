@@ -1,5 +1,5 @@
 import { OrganizationContext } from "@/context/OrganizationContext";
-import useContext from "react";
+import { useContext } from "react";
 
 function useOrganization(){
     return useContext(OrganizationContext);

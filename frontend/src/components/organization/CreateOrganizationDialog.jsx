@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import organizationSchema from "@/validations/organization.validation.js";
-import { createOrganization } from "@/services/organization.service.js";
+import { createOrganization, getOrganization } from "@/services/organization.service.js";
 import toast from "react-hot-toast";
+import useOrganization from "@/hooks/useOrganization.js";
 
 function CreateOrganizationDialog({ open, onOpenChange }){
     const [ isLoading, setIsLoading ] = useState(false);
+    const { getOrganizations } = useOrganization();
 
     const { register, handleSubmit, formState: { errors } , reset } = useForm({
         resolver: zodResolver(organizationSchema)
@@ -20,6 +22,7 @@ function CreateOrganizationDialog({ open, onOpenChange }){
         try {
             const response = await createOrganization(data);
 
+            await getOrganizations();
             toast.success(response.message);
 
             reset();
