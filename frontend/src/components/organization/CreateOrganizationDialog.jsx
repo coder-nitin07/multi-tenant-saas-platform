@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import organizationSchema from "@/validations/organization.validation.js";
-import { createOrganization, getOrganization } from "@/services/organization.service.js";
+import { createOrganization } from "@/services/organization.service.js";
 import toast from "react-hot-toast";
 import useOrganization from "@/hooks/useOrganization.js";
 
