@@ -1,5 +1,5 @@
 import { createOrganization as createOrganizationService } from "@/services/organization.service";
-import createContext from "react";
+import { createContext } from "react";
 
 const OrganizationContext = createContext();
 

@@ -24,7 +24,7 @@ function OrganizationForm({ register, errors, onSubmit, handleSubmit, isLoading,
                 ) }
             </div>
 
-            <div>
+            {/* <div>
                 <Label>Description</Label>
 
                 <Textarea
@@ -37,7 +37,7 @@ function OrganizationForm({ register, errors, onSubmit, handleSubmit, isLoading,
                         { errors.description.message }
                     </p>
                 ) }
-            </div>
+            </div> */}
 
             <Button
                 className='w-full'
