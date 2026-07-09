@@ -8,10 +8,11 @@ import { useParams } from "react-router-dom";
 function OrganizationDetails(){
     const { id } = useParams();
 
-    const { selectedOrganization, getOrganizationById } = useOrganization();
+    const { selectedOrganization, getOrganizationById, members, getOrganizationMembers } = useOrganization();
     
     useEffect(()=>{
-        getOrganizationById(id)
+        getOrganizationById(id),
+        getOrganizationMembers(id)
     }, [ id ]);
 
     console.log(selectedOrganization, "select");
@@ -48,7 +49,7 @@ function OrganizationDetails(){
 
                 <StatCard
                     title='Members'
-                    value={1}
+                    value={ members.length }
                     icon={ Users }
                 />
 
@@ -57,6 +58,41 @@ function OrganizationDetails(){
                     value={ 0 }
                     icon={ Mail }
                 />
+            </div>
+
+            {/* Organization Members */}
+            <div className="space-y-4">
+                <h2 className="text-xl font-semibold">
+                    Organization Members
+                </h2>
+
+                {members.length === 0 ? (
+                    <p className="text-slate-500">
+                        No members found.
+                    </p>
+                ) : (
+                    members.map((member) => (
+                        <div
+                            key={member.id}
+                            className="flex items-center justify-between border rounded-lg p-4"
+                        >
+                            <div>
+                                <p className="font-medium">
+                                    {member.user.email}
+                                </p>
+
+                                <p className="text-sm text-slate-500">
+                                    Joined: {new Date(member.createdAt).toLocaleDateString()}
+                                </p>
+                            </div>
+
+                            <span className="font-semibold">
+                                {member.role}
+                            </span>
+                        </div>
+                    ))
+                )}
+
             </div>
 
 

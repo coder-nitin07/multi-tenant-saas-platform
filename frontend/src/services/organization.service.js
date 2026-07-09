@@ -18,4 +18,10 @@ const getOrganizationById = async (id) =>{
     return response.data;
 };
 
-export { createOrganization, getOrganization, getOrganizationById };
+const getOrganizationMembers = async (id) =>{
+    const response = await api.get(`/getOrganizationMembers/${ id }`);
+
+    return response.data;
+};
+
+export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers };
