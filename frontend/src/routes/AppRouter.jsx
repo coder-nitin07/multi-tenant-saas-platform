@@ -8,6 +8,7 @@ import Register from '@/pages/Register';
 import ProtectedRoute from './ProtectedRoute';
 import Organizations from '@/pages/Organizations';
 import OrganizationDetails from '@/pages/OrganizationDetails';
+import Notifications from '@/pages/Notifications';
 
 const AppRouter = ()=>{
     return (
@@ -26,10 +27,11 @@ const AppRouter = ()=>{
                     <Route path='organizations' element={ <Organizations /> } />
                     
                     <Route path='organizations/:id' element={ <OrganizationDetails /> } />
+                    
+                    <Route path='notifications' element={ <Notifications /> } />
 
                     {/* <Route path='members' element={ <Members /> } /> */}
                     {/* <Route path='members' element={ <Invitations /> } /> */}
-                    {/* <Route path='members' element={ <Notificatios /> } /> */}
                     {/* <Route path='members' element={ <Audilog /> } /> */}
                     {/* <Route path='members' element={ <Setting /> } /> */}
                 </Route>

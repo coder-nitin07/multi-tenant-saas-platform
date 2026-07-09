@@ -5,13 +5,16 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import OrganizationProvider from './context/OrganizationContext';
+import NotificationProvider from './context/NotificationContext';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
       <AuthProvider>
           <OrganizationProvider>
-              <App />
-              <Toaster position='top-right' />
+              <NotificationProvider>
+                    <App />
+                    <Toaster position='top-right' />
+              </NotificationProvider>
           </OrganizationProvider>
       </AuthProvider>
   </BrowserRouter>
