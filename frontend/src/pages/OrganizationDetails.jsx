@@ -1,15 +1,17 @@
 import StatCard from "@/components/dashboard/StatCard";
+import InviteMemberDialog from "@/components/organization/InviteMemberDialog";
 import { Button } from "@/components/ui/button";
 import useOrganization from "@/hooks/useOrganization";
 import { Badge, Mail, ShieldCheck, Star, Users } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 function OrganizationDetails(){
     const { id } = useParams();
 
     const { selectedOrganization, getOrganizationById, members, getOrganizationMembers } = useOrganization();
-    
+    const [ open, setOpen ] = useState(false);
+
     useEffect(()=>{
         getOrganizationById(id),
         getOrganizationMembers(id)
@@ -98,9 +100,17 @@ function OrganizationDetails(){
 
             {/*actions */}
             <div className="flex justify-end">
-                <Button>
+                <Button
+                    onClick={ ()=> setOpen(true) }
+                >
                     Invite Member
                 </Button>
+
+                <InviteMemberDialog
+                    open={open}
+                    onOpenChange={setOpen}
+                    organizationId={id}
+                />
             </div>
         </div>
     )

@@ -69,7 +69,10 @@ const getOrganization = async (req, res, next) =>{
             }
         });
         if(getOrganizations.length === 0){
-            return res.status(200).json({ message: 'No Organizaton found' });
+            return res.status(200).json({ 
+                message: 'No Organizaton found',
+                getOrganizations: []
+            });
         }
         
         res.status(200).json({

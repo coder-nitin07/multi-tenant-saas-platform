@@ -24,4 +24,13 @@ const getOrganizationMembers = async (id) =>{
     return response.data;
 };
 
-export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers };
+const inviteMember = async (organizationId, data)=>{
+    const response  = await api.post(
+        `/organizationMemberInvitation/${ organizationId }/invitations`,
+        data
+    );
+
+    return response.data;
+};
+
+export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers, inviteMember };

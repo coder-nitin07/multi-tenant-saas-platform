@@ -2,7 +2,8 @@ import {
     createOrganization as createOrganizationService, 
     getOrganization as getOrganizationsService,
     getOrganizationById as getOrganizationByIdService,
-    getOrganizationMembers as getOrganizationMembersService
+    getOrganizationMembers as getOrganizationMembersService,
+    inviteMember as inviteMemberService
 } from "@/services/organization.service";
 import { createContext, useState } from "react";
 
@@ -22,7 +23,7 @@ function OrganizationProvider({ children }){
     const getOrganizations = async ()=>{
         const response = await getOrganizationsService();
 
-        setOrganizations(response.getOrganizations);
+        setOrganizations(response.getOrganizations || []);
 
         return response;
     };
@@ -43,6 +44,15 @@ function OrganizationProvider({ children }){
         return response;
     };
 
+    const inviteMember = async (organizationId, data)=>{
+        const response = await inviteMemberService(
+            organizationId, 
+            data
+        );
+
+        return response;
+    };
+
     return (
         <OrganizationContext.Provider
             value={{
@@ -53,7 +63,9 @@ function OrganizationProvider({ children }){
                 createOrganization,
                 getOrganizations,
                 getOrganizationById,
-                getOrganizationMembers
+                getOrganizationMembers,
+
+                inviteMember
             }}
         >
             { children }

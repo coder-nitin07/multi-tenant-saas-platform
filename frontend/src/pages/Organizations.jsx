@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function Organizations(){
     const [ open, setOpen ] = useState(false);
-    const { organizations, getOrganizations, getOrganizationM } = useOrganization();
+    const { organizations, getOrganizations } = useOrganization();
 
     useEffect(()=>{
         getOrganizations();
