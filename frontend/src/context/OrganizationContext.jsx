@@ -9,6 +9,7 @@ const OrganizationContext = createContext();
 
 function OrganizationProvider({ children }){
     const [ organizations, setOrganizations ] = useState([]);
+    const [ selectedOrganization, setSelectedOrganization ] = useState(null);
 
     const createOrganization = async (data) =>{
         const response = await createOrganizationService(data);
@@ -26,6 +27,9 @@ function OrganizationProvider({ children }){
 
     const getOrganizationById = async (id)=>{
         const response = await getOrganizationByIdService(id);
+        console.log(response, "respone by ID");
+        console.log(response.data, "respone by ID");
+        setSelectedOrganization(response.data);
 
         return response;
     };
@@ -34,6 +38,7 @@ function OrganizationProvider({ children }){
         <OrganizationContext.Provider
             value={{
                 organizations,
+                selectedOrganization,
                 createOrganization,
                 getOrganizations,
                 getOrganizationById

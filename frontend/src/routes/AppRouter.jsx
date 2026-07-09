@@ -7,6 +7,7 @@ import NotFound from '@/pages/NotFound';
 import Register from '@/pages/Register';
 import ProtectedRoute from './ProtectedRoute';
 import Organizations from '@/pages/Organizations';
+import OrganizationDetails from '@/pages/OrganizationDetails';
 
 const AppRouter = ()=>{
     return (
@@ -23,6 +24,8 @@ const AppRouter = ()=>{
                     <Route path='dashboard' element={ <Dashboard /> } />
 
                     <Route path='organizations' element={ <Organizations /> } />
+                    
+                    <Route path='organizations/:id' element={ <OrganizationDetails /> } />
 
                     {/* <Route path='members' element={ <Members /> } /> */}
                     {/* <Route path='members' element={ <Invitations /> } /> */}

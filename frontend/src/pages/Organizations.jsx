@@ -2,6 +2,7 @@ import CreateOrganizationDialog from "@/components/organization/CreateOrganizati
 import { Button } from "@/components/ui/button";
 import useOrganization from "@/hooks/useOrganization";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Organizations(){
     const [ open, setOpen ] = useState(false);
@@ -38,9 +39,10 @@ function Organizations(){
                     </p>
                 ) : (
                     organizations.map((items)=> (
-                        <div
+                        <Link
                             key={ items.organization.id }
-                            className="border rounded-lg p-5 shadow-sm"
+                            to={`/organizations/${ items.organization.id }`}
+                            className="block border rounded-lg p-5 shadow-sm hover:shadow-md transition"
                         >
                             <h2 className="text-xl font-semibold">
                                 { items.organization.name }
@@ -49,7 +51,7 @@ function Organizations(){
                             <p className="text-sm text-slate-500 mt-2">
                                 Role: { items.role }
                             </p>
-                        </div>
+                        </Link>
                     ))
                 ) }
             </div>
