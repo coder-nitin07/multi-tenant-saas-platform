@@ -51,12 +51,12 @@ const organizationMemberInvitation = async (req, res, next)=>{
             }
         });
 
-        await emailQueue.add("send-invitation-email", {
-            invitationId: inviteUser.id,
-            email,
-            token,
-            organizationId
-        });
+        // await emailQueue.add("send-invitation-email", {
+        //     invitationId: inviteUser.id,
+        //     email,
+        //     token,
+        //     organizationId
+        // });
 
         await createAuditLog({
             organizationId,
@@ -168,6 +168,15 @@ const acceptInvitation = async (req, res, next)=>{
             targetUserId: userId,
             metadata: {
                 invitationId: getInvitationToken.id
+            }
+        });
+
+        const members = await prisma.organizationMember.findMany({
+            where: {
+                organizationId
+            },
+            select: {
+                userId: true
             }
         });
 
