@@ -75,7 +75,8 @@ const organizationMemberInvitation = async (req, res, next)=>{
             title: "Organization Invitation",
             message: `You have been invited to join an organization.`,
             metadata: {
-                invitationId: inviteUser.id
+                invitationId: inviteUser.id,
+                token
             }
         });
 
