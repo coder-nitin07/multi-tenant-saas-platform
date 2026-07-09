@@ -129,4 +129,40 @@ const getOrganizationById = async (req, res, next) =>{
     }
 };
 
-export { createOrganization, getOrganization, getOrganizationById };
+// get organization members
+const getOrganizationMembers = async (req, res, next)=>{
+    try {
+        const organizationId = req.params.id;
+
+        const fetchMembers = await prisma.organizationMember.findMany({
+            where: {
+                organizationId
+            },
+            select: {
+                id: true,
+                role: true,
+                createdAt: true,
+
+                user: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'asc'
+            }
+        });
+
+        res.status(200).json({
+            message: "Organization members fetched successfully",
+            count: fetchMembers.length,
+            members: fetchMembers
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers };
