@@ -206,6 +206,102 @@ const acceptInvitation = async (req, res, next)=>{
     }
 };
 
+// decline Invitation
+const declineInvitation = async (req, res, next)=>{
+    try {
+        const token = req.body.token;
+
+        if (!token) {
+            return next(new AppError("Token missing", 404));
+        }
+
+        // Check invitation
+        const invitation = await prisma.invitation.findFirst({
+            where: { token }
+        });
+
+        if (!invitation) {
+            return next(new AppError("Invitation not found", 404));
+        }
+
+        // Already accepted / declined
+        if (invitation.status !== "PENDING") {
+            return next(new AppError("Invitation already processed", 400));
+        }
+
+        // Check expiry
+        if (new Date() > invitation.expiresAt) {
+            return next(new AppError("Invitation token expired", 410));
+        }
+
+        // Check correct user
+        if (invitation.email !== req.user.email) {
+            return next(
+                new AppError(
+                    "You cannot decline this invitation",
+                    403
+                )
+            );
+        }
+
+        const userId = req.user.id;
+        const organizationId = invitation.organizationId;
+
+        // Update invitation
+        const updatedInvitation = await prisma.invitation.update({
+            where: {
+                id: invitation.id
+            },
+            data: {
+                status: "DECLINED"
+            }
+        });
+
+        // Audit Log
+        await createAuditLog({
+            organizationId,
+            actorId: userId,
+            action: AUDIT_ACTION.INVITATION_DECLINED,
+            targetUserId: userId,
+            metadata: {
+                invitationId: invitation.id
+            }
+        });
+
+        // Notify Organization Members
+        const members = await prisma.organizationMember.findMany({
+            where: {
+                organizationId
+            },
+            select: {
+                userId: true
+            }
+        });
+
+        await Promise.all(
+            members.map(member =>
+                createNotification({
+                    userId: member.userId,
+                    organizationId,
+                    type: NOTIFICATION_TYPE.INVITATION_DECLINED,
+                    title: "Invitation Declined",
+                    message: `${req.user.email} declined the invitation.`,
+                    metadata: {
+                        invitationId: invitation.id
+                    }
+                })
+            )
+        );
+
+        res.status(200).json({
+            message: "Invitation declined successfully.",
+            invitation: updatedInvitation
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 // get organization audit logs
 const getOrganizationAuditLogs = async (req, res, next) => {
     try {
@@ -309,4 +405,4 @@ const markNotificationAsRead = async (req, res, next) => {
     }
 };
 
-export { organizationMemberInvitation, acceptInvitation, getOrganizationAuditLogs, getNotifications, markNotificationAsRead }
+export { organizationMemberInvitation, acceptInvitation, declineInvitation, getOrganizationAuditLogs, getNotifications, markNotificationAsRead }
