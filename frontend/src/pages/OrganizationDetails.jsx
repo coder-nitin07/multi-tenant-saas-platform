@@ -9,12 +9,13 @@ import { useParams } from "react-router-dom";
 function OrganizationDetails(){
     const { id } = useParams();
 
-    const { selectedOrganization, getOrganizationById, members, getOrganizationMembers } = useOrganization();
+    const { selectedOrganization, getOrganizationById, members, getOrganizationMembers, auditLogs, getOrganizationAuditLogs } = useOrganization();
     const [ open, setOpen ] = useState(false);
 
     useEffect(()=>{
         getOrganizationById(id),
         getOrganizationMembers(id)
+        getOrganizationAuditLogs(id)
     }, [ id ]);
 
     console.log(selectedOrganization, "select");
@@ -95,6 +96,53 @@ function OrganizationDetails(){
                     ))
                 )}
 
+            </div>
+
+            {/* Audit Logs */}
+            <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Activity</h2>
+
+                {
+                    auditLogs.length === 0 ? (
+                        <p className="text-slate-500">
+                            No activity yet.
+                        </p>
+
+                    ) : (
+                        auditLogs.map((log) => (
+                            <div
+                                key={log.id}
+                                className="border rounded-lg p-4"
+                            >
+                                <div className="flex justify-between">
+                                    <div>
+                                        <p className="font-medium">
+                                            {log.actor?.email}
+                                        </p>
+
+                                        <p className="text-sm text-slate-500 mt-1">
+                                            {log.action}
+                                        </p>
+
+                                        {
+                                            log.target && (
+                                                <p className="text-sm text-slate-500">
+                                                    Target: {log.target.email}
+                                                </p>
+                                            )
+                                        }
+                                    </div>
+
+                                    <span className="text-xs text-slate-400">
+                                        {new Date(
+                                            log.createdAt
+                                        ).toLocaleString()}
+                                    </span>
+                                </div>
+                            </div>
+                        ))
+                    )
+                }
             </div>
 
 

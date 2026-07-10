@@ -51,4 +51,12 @@ const declineInvitation = async (token) =>{
     return response.data;
 };
 
-export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers, inviteMember, acceptInvitation, declineInvitation };
+const getOrganizationAuditLogs = async (id)=>{
+    const response = await api.get(
+        `/${ id }/audit-logs`
+    );
+
+    return response.data;
+};
+
+export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers, inviteMember, acceptInvitation, declineInvitation, getOrganizationAuditLogs };
