@@ -1,5 +1,9 @@
 import { getNotifications as getNotificationsService } from "@/services/notification.service";
-import { acceptInvitation as acceptInvitationService, declineInvitation as declineInvitationService } from "@/services/organization.service";
+import { 
+    acceptInvitation as acceptInvitationService, 
+    declineInvitation as declineInvitationService,
+    markNotificationAsRead as markNotificationAsReadService 
+} from "@/services/organization.service";
 import { createContext, useState } from "react";
 
 const NotificationContext = createContext();
@@ -31,13 +35,33 @@ function NotificationProvider({ children }){
         return response;
     };
 
+    const markNotificationAsRead = async (notificationId) => {
+        const response = await markNotificationAsReadService(
+            notificationId
+        );
+
+        setNotifications((prev) =>
+            prev.map((notification) =>
+                notification.id === notificationId
+                    ? {
+                        ...notification,
+                        isRead: true
+                    }
+                    : notification
+            )
+        );
+
+        return response;
+    };
+
     return(
         <NotificationContext.Provider
             value={{
                 notifications,
                 getNotifications,
                 acceptInvitation,
-                declineInvitation
+                declineInvitation,
+                markNotificationAsRead
             }}
         >
             { children }

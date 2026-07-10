@@ -59,4 +59,12 @@ const getOrganizationAuditLogs = async (id)=>{
     return response.data;
 };
 
-export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers, inviteMember, acceptInvitation, declineInvitation, getOrganizationAuditLogs };
+const markNotificationAsRead = async (notificationId) => {
+    const response = await api.patch(
+        `/${ notificationId }/read`
+    );
+
+    return response.data;
+};
+
+export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers, inviteMember, acceptInvitation, declineInvitation, getOrganizationAuditLogs, markNotificationAsRead };

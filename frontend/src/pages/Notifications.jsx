@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import useNotification from "@/hooks/useNotification";
 import useOrganization from "@/hooks/useOrganization";
+import { markNotificationAsRead } from "@/services/organization.service";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 
@@ -45,7 +46,18 @@ function Notifications(){
             );
         }
     };
-    // console.log(notification.metadata, "metadata")
+    
+    const handleMarkAsRead = async (notificationId) => {
+        try {
+            await markNotificationAsRead(notificationId);
+        } catch (error) {
+            toast.error(
+                error.response?.data?.message ||
+                "Something went wrong."
+            );
+        }
+
+    };
     return (
         <div className="space-y-6">
             {/* Page header */}
@@ -70,10 +82,15 @@ function Notifications(){
                 <div className="space-y-4">
                     { notifications.map((notification)=>(
                         <div
-                        key={ notification.id }
-                        className="border rounded-lg p-5"
+                            key={ notification.id }
+                            onClick={()=> handleMarkAsRead(notification.id) }
+                             className={`border rounded-lg p-5 cursor-pointer transition
+                                    ${
+                                        notification.isRead
+                                            ? "bg-slate-50"
+                                            : "bg-blue-50 border-blue-400"
+                                    }`}
                         >
-                            
                             <h2 className="font-semibold">
                                 { notification.title }
                             </h2>
