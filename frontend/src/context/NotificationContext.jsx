@@ -1,5 +1,5 @@
 import { getNotifications as getNotificationsService } from "@/services/notification.service";
-import { acceptInvitation as acceptInvitationService } from "@/services/organization.service";
+import { acceptInvitation as acceptInvitationService, declineInvitation as declineInvitationService } from "@/services/organization.service";
 import { createContext, useState } from "react";
 
 const NotificationContext = createContext();
@@ -23,12 +23,21 @@ function NotificationProvider({ children }){
         return response;
     };
 
+    const declineInvitation = async (token)=>{
+        const response = await declineInvitationService(token);
+
+        await getNotifications();
+
+        return response;
+    };
+
     return(
         <NotificationContext.Provider
             value={{
                 notifications,
                 getNotifications,
-                acceptInvitation
+                acceptInvitation,
+                declineInvitation
             }}
         >
             { children }

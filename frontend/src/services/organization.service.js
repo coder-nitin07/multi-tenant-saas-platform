@@ -42,4 +42,13 @@ const acceptInvitation = async (token) =>{
     return response.data;
 };
 
-export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers, inviteMember, acceptInvitation };
+const declineInvitation = async (token) =>{
+    const response = await api.post(
+        '/declineInvitation',
+        { token }
+    );
+
+    return response.data;
+};
+
+export { createOrganization, getOrganization, getOrganizationById, getOrganizationMembers, inviteMember, acceptInvitation, declineInvitation };

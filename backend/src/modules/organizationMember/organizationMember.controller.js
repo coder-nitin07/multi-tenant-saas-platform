@@ -357,10 +357,32 @@ const getNotifications = async (req, res, next) => {
             }
         });
 
+        const data = await Promise.all(
+            notifications.map(async (notification)=>{
+                if(notification.type !== "INVITATION_SENT" || !notification.metadata?.invitationId){
+                    return notification;
+                }
+
+                const invitaiton = await prisma.invitation.findUnique({
+                    where: {
+                        id: notification.metadata.invitationId
+                    },
+                    select: {
+                        status: true
+                    }
+                });
+
+                return {
+                    ...notification,
+                    invitationStatus: invitaiton?.status
+                }
+            })
+        )
+
         res.status(200).json({
             message: "Notifications fetched successfully",
-            count: notifications.length,
-            data: notifications
+            count: data.length,
+            data
         });
 
     } catch (err) {

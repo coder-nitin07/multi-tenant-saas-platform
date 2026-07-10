@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 
 function Notifications(){
-    const { notifications, getNotifications, acceptInvitation } = useNotification();
+    const { notifications, getNotifications, acceptInvitation, declineInvitation } = useNotification();
 
     const { getOrganizations } = useOrganization();
 
@@ -13,28 +13,39 @@ function Notifications(){
         getNotifications();
     }, []);
 
+    
+
      const handleAcceptInvitation = async (token) => {
-
         try {
-
             const response = await acceptInvitation(token);
 
             toast.success(response.message);
 
             // Refresh organizations
             await getOrganizations();
-
         } catch (error) {
-
             toast.error(
                 error.response?.data?.message ||
                 "Something went wrong."
             );
-
         }
-
     };
 
+    const handleDeclineInvitation = async (token)=>{
+        try {
+            const response = await declineInvitation(token);
+
+            toast.success(response.message);
+
+            await getOrganizations();
+        } catch (error) {
+            toast.error(
+                error.response?.data?.message ||
+                "Something went wrong"
+            );
+        }
+    };
+    // console.log(notification.metadata, "metadata")
     return (
         <div className="space-y-6">
             {/* Page header */}
@@ -59,9 +70,10 @@ function Notifications(){
                 <div className="space-y-4">
                     { notifications.map((notification)=>(
                         <div
-                            key={ notification.id }
-                            className="border rounded-lg p-5"
+                        key={ notification.id }
+                        className="border rounded-lg p-5"
                         >
+                            
                             <h2 className="font-semibold">
                                 { notification.title }
                             </h2>
@@ -77,19 +89,61 @@ function Notifications(){
                             </p>
 
                             {/* Accept Invitation */}
-                            { notification.type === "INVITATION_SENT" &&
-                                notification.metadata?.token && (
+                            {notification.type === "INVITATION_SENT" && (
 
-                                    <Button
-                                        className="mt-4"
-                                        onClick={() =>
-                                            handleAcceptInvitation(
-                                                notification.metadata.token
-                                            )
-                                        }
-                                    >
-                                        Accept Invitation
-                                    </Button>
+                                <>
+                                    {notification.invitationStatus === "PENDING" && (
+
+                                        <div className="flex gap-3 mt-4">
+
+                                            <Button
+                                                onClick={() =>
+                                                    handleAcceptInvitation(
+                                                        notification.metadata.token
+                                                    )
+                                                }
+                                            >
+                                                Accept Invitation
+                                            </Button>
+
+                                            <Button
+                                                variant="destructive"
+                                                onClick={() =>
+                                                    handleDeclineInvitation(
+                                                        notification.metadata.token
+                                                    )
+                                                }
+                                            >
+                                                Decline Invitation
+                                            </Button>
+
+                                        </div>
+
+                                    )}
+
+                                    {notification.invitationStatus === "ACCEPTED" && (
+
+                                        <Button
+                                            disabled
+                                            className="mt-4 bg-green-600 hover:bg-green-600 cursor-default"
+                                        >
+                                            ✅ Invitation Accepted
+                                        </Button>
+
+                                    )}
+
+                                    {notification.invitationStatus === "DECLINED" && (
+
+                                        <Button
+                                            disabled
+                                            variant="destructive"
+                                            className="mt-4 cursor-default"
+                                        >
+                                            ❌ Invitation Declined
+                                        </Button>
+
+                                    )}
+                                </>
 
                             )}
                         </div>
